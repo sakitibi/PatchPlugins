@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "patch.plugins"
-version = "2.6.0.0"
+version = "2.9.9.9"
 
 repositories {
     mavenCentral()
