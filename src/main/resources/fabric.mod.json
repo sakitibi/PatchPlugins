@@ -1,8 +1,8 @@
 {
     "schemaVersion": 1,
     "id": "PatchPlugins",
-    "version": "3.0.0.0",
-    "name": "Login Mod",
+    "version": "3.0.0.1",
+    "name": "PatchPlugins",
     "description": "Copyright SKNewRoles",
     "aut9ors": ["Sakitibi"],
     "contact": {},
