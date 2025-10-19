@@ -38,7 +38,7 @@ object PatchPlugins : ModInitializer {
                                             return@executes 0
                                         }
 
-                                        val downloadUrl = "https://github.com/sakitibi/Minecraft-Werewolf_Quest-Mods-SKNewRoles/releases/download/V$version/SKNewRolesv$version.$filetype"
+                                        val downloadUrl = "https://github.com/sakitibi/SKNewRoles/releases/download/V$version/SKNewRolesv$version.$filetype"
                                         val tempFile = File("downloads/$version.$filetype")
                                         val worldName = "SKNewRoles" // 必要なら動的に取得も可能
 
