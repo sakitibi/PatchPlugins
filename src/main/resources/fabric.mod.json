@@ -10,7 +10,7 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-            "com.example.Patch.Plugins"
+            "com.example.PatchPlugins"
         ]
     },
     "depends": {

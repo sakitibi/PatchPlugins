@@ -56,6 +56,7 @@ object PatchPlugins : ModInitializer {
 
                                                 source.sendMessage(Text.of("✅ $version を展開しました"))
                                             } catch (e: Exception) {
+                                                println("Error: ${e.message}")
                                                 source.sendError(Text.of("❌ エラー: ${e.message}"))
                                             }
                                         }.start()
