@@ -1,4 +1,4 @@
-package com.example.patch
+package com.example
 
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.fabricmc.api.ModInitializer
