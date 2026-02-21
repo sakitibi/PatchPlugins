@@ -7,7 +7,7 @@ import net.minecraft.server.command.CommandManager
 import net.minecraft.text.Text
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.Response
+import okio.Buffer
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream
@@ -17,7 +17,7 @@ import java.util.zip.ZipInputStream
 import java.net.URI
 import java.awt.Desktop
 
-object PatchPlugins : ModInitializer {
+class PatchPlugins : ModInitializer {
     private val client = OkHttpClient()
 
     override fun onInitialize() {
