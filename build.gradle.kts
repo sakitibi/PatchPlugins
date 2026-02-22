@@ -39,6 +39,7 @@ tasks {
 
         // runtimeClasspath 全部を展開
         from(project.configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+
         // Loom の remapJar に依存
         finalizedBy("remapJar")
     }
@@ -49,8 +50,11 @@ tasks {
     }
 
     // remapJar は shadowJar を元に Fabric 用に変換
-    named("remapJar") {
+    named<net.fabricmc.loom.task.RemapJarTask>("remapJar") {
         dependsOn("shadowJar")
+        // ShadowJar の出力を remapJar に入力として設定
+        input.set(tasks.named("shadowJar").get().archiveFile)
+
         doFirst {
             println("Remapping FatJar for Fabric…")
         }
