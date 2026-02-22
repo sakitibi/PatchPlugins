@@ -5,9 +5,12 @@ import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.server.command.CommandManager
 import net.minecraft.text.Text
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okio.Buffer
+
+// ← ここを ShadowJar 用に変更
+import patchplugins.shadow.okhttp3.OkHttpClient
+import patchplugins.shadow.okhttp3.Request
+import patchplugins.shadow.okio.Buffer
+
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream
@@ -18,7 +21,7 @@ import java.net.URI
 import java.awt.Desktop
 
 class PatchPlugins : ModInitializer {
-    private val client = OkHttpClient()
+    private val client = OkHttpClient() // ShadowJar 用パッケージ
 
     override fun onInitialize() {
         CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
@@ -41,20 +44,16 @@ class PatchPlugins : ModInitializer {
 
                                         val downloadUrl = "https://github.com/sakitibi/SKNewRoles/releases/download/V$version/SKNewRolesv$version.$filetype"
                                         val tempFile = File("downloads/$version.$filetype")
-                                        val worldName = "SKNewRoles" // 必要なら動的に取得も可能
+                                        val worldName = "SKNewRoles"
 
                                         Thread {
                                             try {
-                                                // ダウンロード
                                                 downloadFile(downloadUrl, tempFile)
-
-                                                // 展開
                                                 when (filetype) {
                                                     "zip" -> extractZipToTargets(tempFile, worldName)
-                                                    "7z" -> open7zUrl(downloadUrl) // .7zファイルはURLを開くだけ
+                                                    "7z" -> open7zUrl(downloadUrl)
                                                     else -> extractCompressed(filetype, tempFile, worldName)
                                                 }
-
                                                 source.sendMessage(Text.of("✅ $version を展開しました"))
                                             } catch (e: Exception) {
                                                 println("Error: ${e.message}")
@@ -70,11 +69,11 @@ class PatchPlugins : ModInitializer {
         }
     }
 
+    // 以下 download / extract の関数はそのまま
     private fun downloadFile(url: String, targetFile: File) {
         val request = Request.Builder().url(url).build()
         client.newCall(request).execute().use { response ->
             if (!response.isSuccessful) throw Exception("HTTP ${response.code}")
-
             targetFile.parentFile.mkdirs()
             response.body?.byteStream().use { input ->
                 FileOutputStream(targetFile).use { output ->
@@ -92,20 +91,15 @@ class PatchPlugins : ModInitializer {
             var entry: ZipEntry? = zip.nextEntry
             while (entry != null) {
                 val name = entry.name
-
                 val targetFile = when {
                     name.startsWith("resourcepack/") -> File(resourcepacksDir, name.removePrefix("resourcepack/"))
                     name.startsWith("datapack/") -> File(datapacksDir, name.removePrefix("datapack/"))
                     else -> null
                 }
-
                 if (targetFile != null && !entry.isDirectory) {
                     targetFile.parentFile.mkdirs()
-                    FileOutputStream(targetFile).use { output ->
-                        zip.copyTo(output)
-                    }
+                    FileOutputStream(targetFile).use { output -> zip.copyTo(output) }
                 }
-
                 zip.closeEntry()
                 entry = zip.nextEntry
             }
@@ -114,33 +108,20 @@ class PatchPlugins : ModInitializer {
 
     private fun extractCompressed(filetype: String, inputFile: File, worldName: String) {
         val zipFile = File(inputFile.parent, inputFile.nameWithoutExtension + ".zip")
-
         val inputStream: InputStream = when (filetype) {
             "gz" -> GzipCompressorInputStream(inputFile.inputStream())
             "xz" -> XZCompressorInputStream(inputFile.inputStream())
             "bz2" -> BZip2CompressorInputStream(inputFile.inputStream())
             else -> throw IllegalArgumentException("Unsupported filetype: $filetype")
         }
-
-        zipFile.outputStream().use { output ->
-            inputStream.use { it.copyTo(output) }
-        }
-
-        // ZIP 解凍処理
+        zipFile.outputStream().use { output -> inputStream.use { it.copyTo(output) } }
         extractZipToTargets(zipFile, worldName)
     }
 
     private fun open7zUrl(url: String) {
-        // .7zファイルのURLを開くだけの処理
         try {
             val uri = URI.create(url)
-            if (Desktop.isDesktopSupported()) {
-                val desktop = Desktop.getDesktop()
-                desktop.browse(uri)
-                println("Opening 7z URL in browser: $url")
-            } else {
-                println("Desktop is not supported on this platform")
-            }
+            if (Desktop.isDesktopSupported()) Desktop.getDesktop().browse(uri)
         } catch (e: Exception) {
             println("Failed to open URL: ${e.message}")
         }
