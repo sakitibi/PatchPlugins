@@ -39,11 +39,6 @@ tasks {
 
         // runtimeClasspath 全部を展開
         from(project.configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-
-        // 名前衝突回避
-        relocate("okhttp3", "patchplugins.shadow.okhttp3")
-        relocate("okio", "patchplugins.shadow.okio")
-
         // Loom の remapJar に依存
         finalizedBy("remapJar")
     }

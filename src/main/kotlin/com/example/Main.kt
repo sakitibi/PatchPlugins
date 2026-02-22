@@ -5,12 +5,9 @@ import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.server.command.CommandManager
 import net.minecraft.text.Text
-
-// ← ここを ShadowJar 用に変更
-import patchplugins.shadow.okhttp3.OkHttpClient
-import patchplugins.shadow.okhttp3.Request
-import patchplugins.shadow.okio.Buffer
-
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okio.Buffer
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream
